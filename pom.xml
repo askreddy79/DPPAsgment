@@ -25,8 +25,23 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptor>
+                        src/main/assembly/assembly.xml
+                    </descriptor>
+                </configuration>
+            </plugin>
         </plugins>
 
     </build>
