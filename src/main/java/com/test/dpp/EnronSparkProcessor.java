@@ -1,7 +1,10 @@
 package com.test.dpp;
 
+import org.apache.hadoop.io.BytesWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
 /**
@@ -9,14 +12,25 @@ import org.apache.spark.api.java.JavaSparkContext;
  */
 public class EnronSparkProcessor {
 
-    public static void main(String args[]) {
-        String sourceFolder = "hdfs://";
+    public JavaSparkContext sparkContext;
+    public EnronSparkProcessor(String path){
+       sparkContext = initializeSpark();
+       JavaPairRDD<Text,BytesWritable> zipFileRDD = sparkContext.newAPIHadoopFile(path,new ZipFileInputFormat().getClass(),Text.class,
+               BytesWritable.class,sparkContext.hadoopConfiguration());
 
-
-
-        final SparkConf sparkConf = new SparkConf().setAppName("EnronEmailProcessor");
-        final JavaSparkContext ctx = new JavaSparkContext(sparkConf);
 
 
     }
+
+    public JavaSparkContext initializeSpark() {
+        final SparkConf sparkConf = new SparkConf().setAppName("EnronEmailProcessor");
+        final JavaSparkContext ctx = new JavaSparkContext(sparkConf);
+        return ctx;
+    }
+    public static void main(String args[]) {
+        String path = args[0];
+       new EnronSparkProcessor(path);
+    }
+
+
 }
