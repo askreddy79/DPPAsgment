@@ -1,9 +1,6 @@
 package com.test.dpp;
 
-import com.pff.PSTException;
-import com.pff.PSTFile;
-import com.pff.PSTFolder;
-import com.pff.PSTMessage;
+import com.pff.*;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -43,9 +40,9 @@ public class ExtractZipContents {
     public void processFolder(PSTFolder folder) throws PSTException, IOException {
 
         depth++;
-
+        //System.out.println("Folder name : " + folder.getDisplayName());
         if (depth > 0) {
-            printDepth();
+            printDepth(folder.getDisplayName());
         }
 
         if (folder.hasSubfolders()) {
@@ -58,10 +55,25 @@ public class ExtractZipContents {
         if (folder.getContentCount() > 0) {
             depth++;
             PSTMessage email = (PSTMessage) folder.getNextChild();
+
+
             while(email!=null){
-                printDepth();
+                printDepth("");
                 System.out.println("Email: " +email.getSubject());
-                System.out.println("EMail body:" + email.getBody());
+                //System.out.println("EMail body:" + email.getBody());
+                System.out.println("email.getDisplayTo()-->" +email.getDisplayTo());
+                System.out.println("email.getDisplayCC()-->" + email.getDisplayCC());
+                System.out.println("email.getEmailAddress()-->" + email.getEmailAddress());
+                System.out.println("email.getDisplayName()-->" + email.getDisplayName());
+                System.out.println("email.getNumberOfRecipients()-->" + email.getNumberOfRecipients());
+                System.out.println("email.getOriginalDisplayBcc()-->" + email.getOriginalDisplayBcc());
+                System.out.println("email.getOriginalDisplayCc()-->" + email.getOriginalDisplayCc());
+                System.out.println("email.getOriginalDisplayTo()-->" + email.getOriginalDisplayTo());
+
+                for (int i=0;i<email.getNumberOfRecipients();i++) {
+                    PSTRecipient pstRecipient = email.getRecipient(i);
+                    System.out.println("pstRecipient.getEmailAddress(): "+pstRecipient.getEmailAddress());
+                }
                 int countWords = countWords(email.getBody());
 
                 email = (PSTMessage) folder.getNextChild();
@@ -99,11 +111,11 @@ public class ExtractZipContents {
     }
 
 
-    public void printDepth() {
+    public void printDepth(String folderName) {
         for (int x=0;x<depth-1;x++){
             System.out.println(" | ");
         }
-        System.out.println(" |- ");
+        System.out.println(" |- " +  folderName);
     }
 
     public void extractZipFile(String ZipFile) throws IOException {

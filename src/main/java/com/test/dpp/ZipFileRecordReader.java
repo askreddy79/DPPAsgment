@@ -72,6 +72,7 @@ public class ZipFileRecordReader extends RecordReader<Text,BytesWritable> {
         }
 
         if (matcher.find()) {
+            logger.info("match found");
             currentKey = new Text(entry.getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             byte[] temp = new byte[8192];

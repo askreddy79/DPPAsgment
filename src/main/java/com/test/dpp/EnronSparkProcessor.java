@@ -18,6 +18,8 @@ import scala.Tuple2;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -79,7 +81,7 @@ public class EnronSparkProcessor implements Serializable {
 
             while(email!=null){
                 //printDepth();
-                LOG.info("Email: " +email.getSubject());
+                //LOG.info("Email: " +email.getSubject());
                 //LOG.info("EMail body:" + email.getBody());
                 countWords = countWords + countWords(email.getBody());
                 email = (PSTMessage) folder.getNextChild();
@@ -89,7 +91,9 @@ public class EnronSparkProcessor implements Serializable {
             depth--;
         }
         depth--;
-        return countWords/pstCount;
+        LOG.info("pstCount: " + pstCount + "countWords: " + countWords + "countWords/pstCount: " + countWords/pstCount);
+
+        return (pstCount==0 ? pstCount : countWords/pstCount);
     }
 
     public static int countWords(String s){
@@ -129,8 +133,14 @@ public class EnronSparkProcessor implements Serializable {
 
             sparkContext = initializeSpark();
             Job job = Job.getInstance(sparkContext.hadoopConfiguration());
-            JavaPairRDD<Text,BytesWritable> zipFileRDD = sparkContext.newAPIHadoopFile(path,new ZipFileInputFormat().getClass(),Text.class,
+
+            JavaPairRDD<Text,BytesWritable> zipFileRDD = sparkContext.newAPIHadoopFile(path,ZipFileInputFormat.class,Text.class,
                     BytesWritable.class,job.getConfiguration());
+////
+//            zipFileRDD.foreach(rec -> {
+//                LOG.info("rec is : " + new String(rec._1().getBytes()).toString());
+//                LOG.info("rec bytes are : " + new String(rec._2().getBytes()).toString());
+//            });
 
             JavaPairRDD<String,Integer> rdd =   zipFileRDD.mapToPair(zipFileRec -> {
                 LOG.info("file name" + zipFileRec._1());
@@ -141,7 +151,7 @@ public class EnronSparkProcessor implements Serializable {
             });
 
             rdd.foreach(rec -> {
-                LOG.info("Zip file name : " + rec._1() + " --- Zip file wordcount : " + rec._2().intValue() );
+                LOG.info("Zip file name : " + rec._1().toString() + " --- Zip file wordcount : " + rec._2().intValue() );
             });
 
         } catch(IOException ex) {

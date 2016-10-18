@@ -1,6 +1,7 @@
 #!/bin/sh
 
-export JAVA_HOME=/opt/jdk1.8.0_101/jre
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0
+
 
 #export JRE_HOME=$JAVA_HOME/jre
 
@@ -28,7 +29,7 @@ echo $CLASSPATH
 echo "PATH---------------------------------------"
 echo $PATH
 
-spark-submit --verbose --class com.test.dpp.EnronSparkProcessor \
+nohup spark-submit --verbose --class com.test.dpp.EnronSparkProcessor \
 --master yarn-client \
 --num-executors 4 \
 --driver-memory 2G \
@@ -36,7 +37,9 @@ spark-submit --verbose --class com.test.dpp.EnronSparkProcessor \
 --conf "spark.executor.extraClassPath=$JAVA_HOME/bin:/etc/hive/conf:/usr/lib/hadoop-lzo/lib/*:/usr/lib/hadoop/hadoop-aws.jar:/usr/share/aws/aws-java-sdk/*:/usr/share/aws/emr/emrfs/conf:/usr/share/aws/emr/emrfs/lib/*:/usr/share/aws/emr/emrfs/auxlib/*:/usr/share/aws/emr/security/conf:/usr/share/aws/emr/security/lib/*" \
 --conf "spark.driver.extraClassPath=$JAVA_HOME/bin:/etc/hive/conf:/usr/lib/hadoop-lzo/lib/*:/usr/lib/hadoop/hadoop-aws.jar:/usr/share/aws/aws-java-sdk/*:/usr/share/aws/emr/emrfs/conf:/usr/share/aws/emr/emrfs/lib/*:/usr/share/aws/emr/emrfs/auxlib/*:/usr/share/aws/emr/security/conf:/usr/share/aws/emr/security/lib/*" \
 --jars $OTHER_JARS,$MAINJAR \
-10 "$1" -DprocEnron
+10 "$1" -DprocEnron \
+> enron.err 2> enron.log < /dev/null &
+
 
 echo "--- started DPP ---"
 
