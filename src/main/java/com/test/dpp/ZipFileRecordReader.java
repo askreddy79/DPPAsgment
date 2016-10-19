@@ -62,16 +62,16 @@ public class ZipFileRecordReader extends RecordReader<Text,BytesWritable> {
 
     public boolean patternEntryCheck(ZipEntry entry) throws IOException {
         String fileName = entry.getName();
-        String file_pattern = "zip";//conf.get("file.pattern");
-        Pattern pattern = null;
-        Matcher matcher = null;
-
-        if (file_pattern != null) {
-            pattern = Pattern.compile(file_pattern.toLowerCase().trim());
-            matcher = pattern.matcher(fileName.toLowerCase());
-        }
-
-        if (matcher.find()) {
+//        String file_pattern = "zip";//conf.get("file.pattern");
+//        Pattern pattern = null;
+//        Matcher matcher = null;
+//
+//        if (file_pattern != null) {
+//            pattern = Pattern.compile(file_pattern.toLowerCase().trim());
+//            matcher = pattern.matcher(fileName.toLowerCase());
+//        }
+//
+//        if (matcher.find()) {
             logger.info("match found");
             currentKey = new Text(entry.getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -86,9 +86,7 @@ public class ZipFileRecordReader extends RecordReader<Text,BytesWritable> {
             zip.closeEntry();
             currentValue = new BytesWritable(bos.toByteArray());
             return true;
-        } else {
-            return getNextKey();
-        }
+
 
         //return true;
 

@@ -29,7 +29,7 @@ echo $CLASSPATH
 echo "PATH---------------------------------------"
 echo $PATH
 
-nohup spark-submit --verbose --class com.test.dpp.EnronSparkProcessor \
+nohup spark-submit --verbose --class com.test.dpp.EnronEmailProcessor \
 --master yarn-client \
 --num-executors 4 \
 --driver-memory 2G \
